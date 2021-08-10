@@ -1,0 +1,16 @@
+#
+# Emerald made by Zowpy
+#
+
+redis:
+  host: "localhost"
+  port: 6379
+  auth:
+    enabled: true
+    password: "emerald"
+
+server-name: "Lobby"
+# Dont touch this!
+server-uuid: "null"
+
+

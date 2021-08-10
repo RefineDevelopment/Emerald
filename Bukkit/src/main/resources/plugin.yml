@@ -1,0 +1,4 @@
+name: Emerald
+version: ${project.version}
+main: me.zowpy.emerald.Emerald
+authors: [ Zowpy ]
