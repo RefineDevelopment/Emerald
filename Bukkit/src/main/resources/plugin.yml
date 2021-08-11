@@ -1,4 +1,4 @@
 name: Emerald
 version: ${project.version}
-main: me.zowpy.emerald.Emerald
+main: me.zowpy.emerald.EmeraldPlugin
 authors: [ Zowpy ]

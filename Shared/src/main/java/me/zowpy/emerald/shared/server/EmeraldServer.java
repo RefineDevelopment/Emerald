@@ -23,6 +23,10 @@ public class EmeraldServer {
     private int port, onlinePlayers, maxPlayers;
     private ServerStatus status;
 
+    public EmeraldServer(UUID uuid) {
+        this.uuid = uuid;
+    }
+
     public EmeraldServer(JsonObject object) {
         this.uuid = UUID.fromString(object.get("uuid").getAsString());
         this.name = object.get("name").getAsString();

@@ -1,7 +1,6 @@
-package me.zowpy.emerald.server;
+package me.zowpy.emerald.shared.server;
 
 import lombok.Data;
-import me.zowpy.emerald.shared.server.ServerStatus;
 
 import java.util.UUID;
 
@@ -10,7 +9,7 @@ import java.util.UUID;
  * Redistribution of this Project is not allowed
  *
  * @author Zowpy
- * Created: 8/10/2021
+ * Created: 8/11/2021
  * Project: Emerald
  */
 

@@ -3,14 +3,11 @@ package me.zowpy.emerald.shared.manager;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import com.google.gson.JsonObject;
-import com.sun.javafx.scene.control.behavior.TableRowBehaviorBase;
 import lombok.Getter;
-import me.zowpy.emerald.EmeraldPlugin;
-import me.zowpy.emerald.server.ServerProperties;
 import me.zowpy.emerald.shared.SharedEmerald;
 import me.zowpy.emerald.shared.server.EmeraldServer;
+import me.zowpy.emerald.shared.server.ServerProperties;
 import me.zowpy.emerald.shared.server.ServerStatus;
-import me.zowpy.jedisapi.redis.subscription.JedisSubscriber;
 import redis.clients.jedis.Jedis;
 
 import java.util.*;
@@ -45,7 +42,7 @@ public class ServerManager {
         try {
             Jedis jedis = emerald.getJedisAPI().getJedisHandler().getJedisPool().getResource();
 
-            for (EmeraldServer server : emeraldServers) {
+           /* for (EmeraldServer server : emeraldServers) {
                 if (jedis.exists("server-" + server.getUuid().toString())) {
                     Map<String, String> data = jedis.hgetAll("server-" + server.getUuid().toString());
                     server.setName(data.get("name"));
@@ -57,8 +54,37 @@ public class ServerManager {
 
                     data.forEach((s, s2) -> emeraldServerData.put(server.getUuid(), s, s2));
                 }
+            }  */
+
+            if (emerald.getJedisAPI().getJedisHandler().getCredentials().isAuth()) {
+                jedis.auth(emerald.getJedisAPI().getJedisHandler().getCredentials().getPassword());
             }
 
+            for (String key : jedis.keys("server*")) {
+                if (key.startsWith("server-")) {
+                    Map<String, String> data = jedis.hgetAll(key);
+
+                    UUID uuid = UUID.fromString(key.replace("server-", ""));
+
+                    EmeraldServer server;
+
+                    if (getByUUID(uuid) == null) {
+                        server = new EmeraldServer(uuid);
+                        emeraldServers.add(server);
+                    }else {
+                        server = getByUUID(uuid);
+                    }
+
+                    server.setName(data.get("name"));
+                    server.setIp(data.get("ip"));
+                    server.setPort(Integer.parseInt(data.get("port")));
+                    server.setStatus(ServerStatus.valueOf(data.get("status")));
+                    server.setOnlinePlayers(Integer.parseInt(data.get("onlinePlayers")));
+                    server.setMaxPlayers(Integer.parseInt(data.get("maxPlayers")));
+
+                    data.forEach((s, s2) -> emeraldServerData.put(uuid, s, s2));
+                }
+            }
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -122,6 +148,10 @@ public class ServerManager {
             data.put("onlinePlayers", server.getOnlinePlayers() + "");
 
             data.forEach((s, s2) -> emeraldServerData.put(server.getUuid(), s, s2));
+
+            if (emerald.getJedisAPI().getJedisHandler().getCredentials().isAuth()) {
+                jedis.auth(emerald.getJedisAPI().getJedisHandler().getCredentials().getPassword());
+            }
             jedis.hset("server-" + server.getUuid().toString(), data);
 
         }catch (Exception e) {
@@ -138,14 +168,20 @@ public class ServerManager {
             Jedis jedis = emerald.getJedisAPI().getJedisHandler().getJedisPool().getResource();
 
             Map<String, String> data = new HashMap<>();
-            data.put("name", emerald.getEmeraldPlugin().getServerProperties().getName());
-            data.put("ip", emerald.getEmeraldPlugin().getServerProperties().getIp());
-            data.put("port", emerald.getEmeraldPlugin().getServerProperties().getPort() + "");
-            data.put("status", emerald.getEmeraldPlugin().getServerProperties().getServerStatus().name());
-            data.put("onlinePlayers", emerald.getEmeraldPlugin().getServerProperties().getOnlinePlayers() + "");
-            data.put("maxPlayers", emerald.getEmeraldPlugin().getServerProperties().getMaxPlayers() + "");
+            data.put("name", emerald.getServerProperties().getName());
+            data.put("ip", emerald.getServerProperties().getIp());
+            data.put("port", emerald.getServerProperties().getPort() + "");
+            data.put("status", emerald.getServerProperties().getServerStatus().name());
+            data.put("onlinePlayers", emerald.getServerProperties().getOnlinePlayers() + "");
+            data.put("maxPlayers", emerald.getServerProperties().getMaxPlayers() + "");
+
+            if (emerald.getJedisAPI().getJedisHandler().getCredentials().isAuth()) {
+                jedis.auth(emerald.getJedisAPI().getJedisHandler().getCredentials().getPassword());
+            }
 
             jedis.hset("server-" + emerald.getUuid().toString(), data);
+
+          //  emerald.getJedisAPI().getJedisHandler().write("updateservers###" + new JsonObject().toString());
 
         }catch (Exception e) {
             e.printStackTrace();
@@ -174,6 +210,10 @@ public class ServerManager {
             data.put("status", server.getStatus().name());
             data.put("onlinePlayers", server.getOnlinePlayers() + "");
             data.put("maxPlayers", server.getMaxPlayers() + "");
+
+            if (emerald.getJedisAPI().getJedisHandler().getCredentials().isAuth()) {
+                jedis.auth(emerald.getJedisAPI().getJedisHandler().getCredentials().getPassword());
+            }
 
             jedis.hset("server-" + server.getUuid().toString(), data);
         }catch (Exception e) {

@@ -2,10 +2,12 @@ package me.zowpy.emerald;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParser;
 import lombok.Getter;
-import me.zowpy.emerald.server.ServerProperties;
 import me.zowpy.emerald.shared.SharedEmerald;
+import me.zowpy.emerald.shared.server.ServerProperties;
 import me.zowpy.emerald.shared.server.ServerStatus;
+import me.zowpy.emerald.task.ServerUpdateTask;
 import me.zowpy.emerald.utils.ConfigFile;
 import me.zowpy.jedisapi.redis.RedisCredentials;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -51,7 +53,7 @@ public class EmeraldPlugin extends JavaPlugin {
         serverProperties.setUuid(uuid);
 
         /*  Create SharedEmerald instance  */
-        sharedEmerald = new SharedEmerald(uuid, this,new RedisCredentials(
+        sharedEmerald = new SharedEmerald(uuid, new RedisCredentials(
                 settingsFile.getConfig().getString("redis.host"),
                 settingsFile.getConfig().getString("redis.auth.password"),
                 "EMERALD:BUKKIT",
@@ -59,7 +61,13 @@ public class EmeraldPlugin extends JavaPlugin {
                 settingsFile.getConfig().getBoolean("redis.auth.enabled")
         ));
 
+        sharedEmerald.setServerProperties(serverProperties);
+        /*  Create the current server to redis cache  */
+        sharedEmerald.getServerManager().createServer();
 
+        sharedEmerald.getServerManager().updateServers();
+
+        new ServerUpdateTask();
 
 
     }

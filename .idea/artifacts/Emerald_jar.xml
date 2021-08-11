@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Emerald:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Emerald_jar</output-path>
+    <root id="archive" name="Emerald.jar">
+      <element id="module-output" name="Bukkit" />
+      <element id="module-output" name="Shared" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/redis/clients/jedis/3.5.2/jedis-3.5.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/slf4j/slf4j-api/1.7.30/slf4j-api-1.7.30.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/commons/commons-pool2/2.6.2/commons-pool2-2.6.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/google/guava/guava/17.0/guava-17.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/google/code/gson/gson/2.8.7/gson-2.8.7.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

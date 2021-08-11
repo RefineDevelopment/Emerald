@@ -2,10 +2,9 @@ package me.zowpy.emerald.shared.jedis;
 
 import com.google.gson.JsonObject;
 import lombok.AllArgsConstructor;
-import me.zowpy.emerald.EmeraldPlugin;
-import me.zowpy.emerald.server.ServerProperties;
 import me.zowpy.emerald.shared.SharedEmerald;
 import me.zowpy.emerald.shared.server.EmeraldServer;
+import me.zowpy.emerald.shared.server.ServerProperties;
 import me.zowpy.jedisapi.redis.subscription.IncomingMessage;
 import me.zowpy.jedisapi.redis.subscription.JedisSubscriber;
 
@@ -35,7 +34,7 @@ public class SharedJedisSubscriber extends JedisSubscriber {
         EmeraldServer server = emerald.getServerManager().getByUUID(UUID.fromString(object.get("uuid").getAsString()));
 
         if (server != null) {
-            emerald.getServerManager().updateServer(server, EmeraldPlugin.GSON.fromJson(object.get("properties").getAsString(), ServerProperties.class));
+            emerald.getServerManager().updateServer(server, SharedEmerald.GSON.fromJson(object.get("properties").getAsString(), ServerProperties.class));
         }
     }
 }

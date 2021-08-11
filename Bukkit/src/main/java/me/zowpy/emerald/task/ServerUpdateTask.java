@@ -1,8 +1,10 @@
 package me.zowpy.emerald.task;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import me.zowpy.emerald.EmeraldPlugin;
-import me.zowpy.emerald.server.ServerProperties;
+import me.zowpy.emerald.shared.server.EmeraldServer;
+import me.zowpy.emerald.shared.server.ServerProperties;
 import me.zowpy.emerald.shared.server.ServerStatus;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -24,7 +26,7 @@ public class ServerUpdateTask extends BukkitRunnable {
 
     @Override
     public void run() {
-        ServerProperties serverProperties = EmeraldPlugin.getInstance().getServerProperties();
+        ServerProperties serverProperties = EmeraldPlugin.getInstance().getSharedEmerald().getServerProperties();
         serverProperties.setServerStatus(Bukkit.hasWhitelist() ? ServerStatus.WHITELISTED : ServerStatus.ONLINE);
         serverProperties.setIp(Bukkit.getIp());
         serverProperties.setPort(Bukkit.getPort());
@@ -34,8 +36,9 @@ public class ServerUpdateTask extends BukkitRunnable {
 
         JsonObject object = new JsonObject();
         object.addProperty("uuid", serverProperties.getUuid().toString());
-        object.addProperty("properties", EmeraldPlugin.GSON.toJson(serverProperties));
+        //object.addProperty("properties", EmeraldPlugin.GSON.toJson(serverProperties));
 
-        EmeraldPlugin.getInstance().getSharedEmerald().getJedisAPI().getJedisHandler().write("updateserver///" + object.toString());
+        System.out.println(new JsonParser().parse("{uuid:aebbce3d-2dff-4f4a-90c9-6997a125b745}") != null);
+        EmeraldPlugin.getInstance().getSharedEmerald().getJedisAPI().getJedisHandler().write("updateserver###" + object.toString());
     }
 }
