@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
 import lombok.Getter;
+import me.zowpy.emerald.command.ServerInfoCommand;
 import me.zowpy.emerald.shared.SharedEmerald;
 import me.zowpy.emerald.shared.server.ServerProperties;
 import me.zowpy.emerald.shared.server.ServerStatus;
@@ -68,6 +69,8 @@ public class EmeraldPlugin extends JavaPlugin {
         sharedEmerald.getServerManager().updateServers();
 
         new ServerUpdateTask();
+
+        getCommand("serverinfo").setExecutor(new ServerInfoCommand());
 
 
     }

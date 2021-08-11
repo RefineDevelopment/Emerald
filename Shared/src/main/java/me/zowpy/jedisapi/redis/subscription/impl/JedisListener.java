@@ -33,7 +33,6 @@ public class JedisListener extends JedisPubSub {
         if (channel.equals(jedisHandler.getCredentials().getChannel())) {
             Executor executor = Executors.newFixedThreadPool(1);
             String[] args = message.split("###");
-            System.out.println(args[1]);
             executor.execute(() -> {
 
                 if (args.length != 2) return;
@@ -44,13 +43,18 @@ public class JedisListener extends JedisPubSub {
 
                 if (subscriber == null) return;
 
-                JsonObject object = JsonParser.parseString(args[1]).getAsJsonObject();
-
                 for (Method method : jedisAPI.getExecutors().get(subscriber)) {
                     IncomingMessage incomingMessage = method.getAnnotation(IncomingMessage.class);
 
                     if (incomingMessage.payload().equalsIgnoreCase(args[0])) {
                         try {
+                            if (method.getParameters().length == 0) {
+                                method.setAccessible(true);
+                                method.invoke(subscriber);
+                                method.setAccessible(false);
+                                return;
+                            }
+                            JsonObject object = new JsonParser().parse(args[1]).getAsJsonObject();
                             method.setAccessible(true);
                             method.invoke(subscriber, object);
                             method.setAccessible(false);

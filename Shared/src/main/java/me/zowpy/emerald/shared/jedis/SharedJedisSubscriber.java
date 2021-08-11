@@ -25,7 +25,7 @@ public class SharedJedisSubscriber extends JedisSubscriber {
     private SharedEmerald emerald;
 
     @IncomingMessage(payload = "updateservers")
-    public void updateServers(JsonObject object) {
+    public void updateServers() {
         emerald.getServerManager().updateServers();
     }
 
@@ -35,6 +35,7 @@ public class SharedJedisSubscriber extends JedisSubscriber {
 
         if (server != null) {
             emerald.getServerManager().updateServer(server, SharedEmerald.GSON.fromJson(object.get("properties").getAsString(), ServerProperties.class));
+            System.out.println("updated");
         }
     }
 }
