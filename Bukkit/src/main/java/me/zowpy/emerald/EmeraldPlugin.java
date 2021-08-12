@@ -2,6 +2,7 @@ package me.zowpy.emerald;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.Getter;
 import me.zowpy.emerald.command.ServerInfoCommand;
@@ -68,7 +69,7 @@ public class EmeraldPlugin extends JavaPlugin {
 
         sharedEmerald.getServerManager().updateServers();
 
-        new ServerUpdateTask();
+        new ServerUpdateTask().start();
 
         getCommand("serverinfo").setExecutor(new ServerInfoCommand());
 
@@ -78,5 +79,11 @@ public class EmeraldPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         instance = null;
+
+        JsonObject object = new JsonObject();
+        object.addProperty("uuid", serverProperties.getUuid().toString());
+
+        sharedEmerald.getServerManager().setOffline(sharedEmerald.getServerManager().getByUUID(serverProperties.getUuid()));
+        sharedEmerald.getJedisAPI().getJedisHandler().write("shutdownserver###" + object.toString());
     }
 }

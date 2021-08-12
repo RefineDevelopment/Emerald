@@ -71,9 +71,10 @@ public class ServerManager {
                     if (getByUUID(uuid) == null) {
                         server = new EmeraldServer(uuid);
                         emeraldServers.add(server);
-                    }else {
+                    } else {
                         server = getByUUID(uuid);
                     }
+
 
                     server.setName(data.get("name"));
                     server.setIp(data.get("ip"));
@@ -181,7 +182,7 @@ public class ServerManager {
 
             jedis.hset("server-" + emerald.getUuid().toString(), data);
 
-          //  emerald.getJedisAPI().getJedisHandler().write("updateservers###" + new JsonObject().toString());
+            emerald.getJedisAPI().getJedisHandler().write("updateservers###a");
 
         }catch (Exception e) {
             e.printStackTrace();
@@ -216,6 +217,25 @@ public class ServerManager {
             }
 
             jedis.hset("server-" + server.getUuid().toString(), data);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setOffline(EmeraldServer server) {
+        server.setStatus(ServerStatus.OFFLINE);
+
+        try {
+            Jedis jedis = emerald.getJedisAPI().getJedisHandler().getJedisPool().getResource();
+
+            if (emerald.getJedisAPI().getJedisHandler().getCredentials().isAuth()) {
+                jedis.auth(emerald.getJedisAPI().getJedisHandler().getCredentials().getPassword());
+            }
+
+            jedis.hset("server-" + server.getUuid().toString(), "status", ServerStatus.OFFLINE.name());
+
+            emeraldServerData.put(server.getUuid(), "status", ServerStatus.OFFLINE.name());
+
         }catch (Exception e) {
             e.printStackTrace();
         }

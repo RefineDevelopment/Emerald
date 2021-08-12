@@ -16,14 +16,33 @@ import org.bukkit.scheduler.BukkitRunnable;
  * Project: Emerald
  */
 
-public class ServerUpdateTask extends BukkitRunnable {
+public class ServerUpdateTask extends Thread {
 
     public ServerUpdateTask() {
-        this.runTaskTimerAsynchronously(EmeraldPlugin.getInstance(), 20L, 20*5L);
+        this.setName("Emerald-Server-Update-Thread");
     }
 
     @Override
     public void run() {
+
+        while (true) {
+
+            try {
+                this.update();
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                sleep(50*20);
+            }catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    public void update() {
         ServerProperties serverProperties = EmeraldPlugin.getInstance().getSharedEmerald().getServerProperties();
         serverProperties.setServerStatus(Bukkit.hasWhitelist() ? ServerStatus.WHITELISTED : ServerStatus.ONLINE);
         serverProperties.setIp(Bukkit.getIp());

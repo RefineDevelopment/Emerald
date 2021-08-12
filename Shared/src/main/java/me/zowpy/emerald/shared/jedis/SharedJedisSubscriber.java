@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import me.zowpy.emerald.shared.SharedEmerald;
 import me.zowpy.emerald.shared.server.EmeraldServer;
 import me.zowpy.emerald.shared.server.ServerProperties;
+import me.zowpy.emerald.shared.server.ServerStatus;
 import me.zowpy.jedisapi.redis.subscription.IncomingMessage;
 import me.zowpy.jedisapi.redis.subscription.JedisSubscriber;
 
@@ -36,6 +37,19 @@ public class SharedJedisSubscriber extends JedisSubscriber {
         if (server != null) {
             emerald.getServerManager().updateServer(server, SharedEmerald.GSON.fromJson(object.get("properties").getAsString(), ServerProperties.class));
             System.out.println("updated");
+        }
+    }
+    @IncomingMessage(payload = "shutdownserver")
+    public void shutdownServer(JsonObject object) {
+        if (emerald.getUuid().equals(UUID.fromString(object.get("uuid").getAsString()))) {
+            return;
+        }
+
+        EmeraldServer server = emerald.getServerManager().getByUUID(UUID.fromString(object.get("uuid").getAsString()));
+
+        if (server != null) {
+            server.setStatus(ServerStatus.OFFLINE);
+            emerald.getServerManager().getEmeraldServerData().put(server.getUuid(), "status", ServerStatus.OFFLINE.name());
         }
     }
 }
