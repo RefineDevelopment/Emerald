@@ -25,9 +25,11 @@ import java.util.*;
 public class ServerManager {
 
     private final SharedEmerald emerald;
+    private final Jedis jedis;
 
     public ServerManager(SharedEmerald emerald) {
         this.emerald = emerald;
+        this.jedis = emerald.getJedisAPI().getJedisHandler().getJedisPool().getResource();
     }
 
     private final List<EmeraldServer> emeraldServers = new ArrayList<>();
@@ -39,16 +41,18 @@ public class ServerManager {
 
     public void updateServers() {
         try {
-            Jedis jedis = emerald.getJedisAPI().getJedisHandler().getJedisPool().getResource();
 
-            System.out.println("test");
             if (emerald.getJedisAPI().getJedisHandler().getCredentials().isAuth()) {
                 jedis.auth(emerald.getJedisAPI().getJedisHandler().getCredentials().getPassword());
             }
-            System.out.println("test 1");
+
 
             for (String key : jedis.keys("server*")) {
                 if (key.startsWith("server-")) {
+                    if (jedis.hget(key, "status").equalsIgnoreCase(ServerStatus.OFFLINE.name())) {
+                        return;
+                    }
+
                     Map<String, String> data = jedis.hgetAll(key);
 
                     UUID uuid = UUID.fromString(key.replace("server-", ""));
@@ -146,8 +150,6 @@ public class ServerManager {
 
     public void updateServer(EmeraldServer server) {
         try {
-            Jedis jedis = emerald.getJedisAPI().getJedisHandler().getJedisPool().getResource();
-
             Map<String, String> data = new HashMap<>();
             data.put("name", server.getName());
             data.put("ip", server.getIp());
@@ -175,7 +177,6 @@ public class ServerManager {
 
     public void createServer() {
         try {
-            Jedis jedis = emerald.getJedisAPI().getJedisHandler().getJedisPool().getResource();
 
             Map<String, String> data = new HashMap<>();
             data.put("name", emerald.getServerProperties().getName());
@@ -207,7 +208,6 @@ public class ServerManager {
 
     public void saveServer() {
         try {
-            Jedis jedis = emerald.getJedisAPI().getJedisHandler().getJedisPool().getResource();
 
             EmeraldServer server = getByUUID(emerald.getUuid());
 
