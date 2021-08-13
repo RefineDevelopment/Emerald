@@ -8,6 +8,7 @@ import me.zowpy.emerald.shared.server.ServerProperties;
 import me.zowpy.emerald.shared.server.ServerStatus;
 import me.zowpy.jedisapi.redis.subscription.IncomingMessage;
 import me.zowpy.jedisapi.redis.subscription.JedisSubscriber;
+import org.bukkit.Bukkit;
 
 import java.util.UUID;
 
@@ -48,8 +49,25 @@ public class SharedJedisSubscriber extends JedisSubscriber {
         EmeraldServer server = emerald.getServerManager().getByUUID(UUID.fromString(object.get("uuid").getAsString()));
 
         if (server != null) {
-            server.setStatus(ServerStatus.OFFLINE);
-            emerald.getServerManager().getEmeraldServerData().put(server.getUuid(), "status", ServerStatus.OFFLINE.name());
+            emerald.getServerManager().setOffline(server, emerald.getJedisAPI().getJedisHandler().getJedisPool().getResource());
+
+        }
+    }
+
+    @IncomingMessage(payload = "command")
+    public void executeCommand(JsonObject object) {
+        if (emerald.getUuid().equals(UUID.fromString(object.get("uuid").getAsString()))) {
+            String command = object.get("command").getAsString();
+
+            if (object.has("issuer")) {
+                UUID uuid = UUID.fromString(object.get("issuer").getAsString());
+                if (Bukkit.getPlayer(uuid) != null) {
+                    Bukkit.getPlayer(uuid).chat("/" + command);
+                    return;
+                }
+            }
+
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
         }
     }
 }

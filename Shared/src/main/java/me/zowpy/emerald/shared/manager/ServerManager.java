@@ -1,7 +1,5 @@
 package me.zowpy.emerald.shared.manager;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 import com.google.gson.JsonObject;
 import lombok.Getter;
 import me.zowpy.emerald.shared.SharedEmerald;
@@ -31,7 +29,6 @@ public class ServerManager {
     }
 
     private final List<EmeraldServer> emeraldServers = new ArrayList<>();
-    private final Table<UUID, String, String> emeraldServerData = HashBasedTable.create();
 
 
     /**
@@ -82,8 +79,6 @@ public class ServerManager {
                     server.setStatus(ServerStatus.valueOf(data.get("status")));
                     server.setOnlinePlayers(Integer.parseInt(data.get("onlinePlayers")));
                     server.setMaxPlayers(Integer.parseInt(data.get("maxPlayers")));
-
-                    data.forEach((s, s2) -> emeraldServerData.put(uuid, s, s2));
                 }
             }
         }catch (Exception e) {
@@ -148,8 +143,6 @@ public class ServerManager {
             data.put("maxPlayers", server.getMaxPlayers() + "");
             data.put("onlinePlayers", server.getOnlinePlayers() + "");
 
-            data.forEach((s, s2) -> emeraldServerData.put(server.getUuid(), s, s2));
-
             if (emerald.getJedisAPI().getJedisHandler().getCredentials().isAuth()) {
                 jedis.auth(emerald.getJedisAPI().getJedisHandler().getCredentials().getPassword());
             }
@@ -182,7 +175,7 @@ public class ServerManager {
 
             jedis.hset("server-" + emerald.getUuid().toString(), data);
 
-            emerald.getJedisAPI().getJedisHandler().write("updateservers###a");
+            updateServers();
 
         }catch (Exception e) {
             e.printStackTrace();
@@ -222,23 +215,24 @@ public class ServerManager {
         }
     }
 
-    public void setOffline(EmeraldServer server) {
+    /**
+     * Sets a server offline
+     *
+     * @param server server to set offline
+     * @param jedis jedis connection to modify the cache
+     */
+
+    public void setOffline(EmeraldServer server, Jedis jedis) {
         server.setStatus(ServerStatus.OFFLINE);
 
-        try {
-            Jedis jedis = emerald.getJedisAPI().getJedisHandler().getJedisPool().getResource();
-
-            if (emerald.getJedisAPI().getJedisHandler().getCredentials().isAuth()) {
-                jedis.auth(emerald.getJedisAPI().getJedisHandler().getCredentials().getPassword());
-            }
-
-            jedis.hset("server-" + server.getUuid().toString(), "status", ServerStatus.OFFLINE.name());
-
-            emeraldServerData.put(server.getUuid(), "status", ServerStatus.OFFLINE.name());
-
-        }catch (Exception e) {
-            e.printStackTrace();
+        if (emerald.getJedisAPI().getJedisHandler().getCredentials().isAuth()) {
+            jedis.auth(emerald.getJedisAPI().getJedisHandler().getCredentials().getPassword());
         }
+
+        Map<String, String> data = jedis.hgetAll("server-" + server.getUuid().toString());
+        data.put("status", ServerStatus.OFFLINE.name());
+        jedis.hset("server-" + server.getUuid().toString(), data);
+
     }
 
 

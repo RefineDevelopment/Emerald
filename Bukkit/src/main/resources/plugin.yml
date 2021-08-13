@@ -9,3 +9,4 @@ commands:
       - si
       - serveri
       - sinfo
+  servers:

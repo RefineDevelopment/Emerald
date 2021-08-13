@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.Getter;
 import me.zowpy.emerald.command.ServerInfoCommand;
+import me.zowpy.emerald.command.ServersCommand;
 import me.zowpy.emerald.shared.SharedEmerald;
 import me.zowpy.emerald.shared.server.ServerProperties;
 import me.zowpy.emerald.shared.server.ServerStatus;
@@ -13,6 +14,7 @@ import me.zowpy.emerald.task.ServerUpdateTask;
 import me.zowpy.emerald.utils.ConfigFile;
 import me.zowpy.jedisapi.redis.RedisCredentials;
 import org.bukkit.plugin.java.JavaPlugin;
+import redis.clients.jedis.Jedis;
 
 import java.util.UUID;
 
@@ -22,8 +24,12 @@ public class EmeraldPlugin extends JavaPlugin {
     @Getter private static EmeraldPlugin instance;
     public static Gson GSON = new GsonBuilder().serializeNulls().create();
 
+    private Jedis jedis;
+
     private SharedEmerald sharedEmerald;
     private ServerProperties serverProperties;
+
+    private ServerUpdateTask serverUpdateTask;
 
     private ConfigFile settingsFile;
 
@@ -69,21 +75,22 @@ public class EmeraldPlugin extends JavaPlugin {
 
         sharedEmerald.getServerManager().updateServers();
 
-        new ServerUpdateTask().start();
+        jedis = sharedEmerald.getJedisAPI().getJedisHandler().getJedisPool().getResource();
+
+        serverUpdateTask = new ServerUpdateTask();
 
         getCommand("serverinfo").setExecutor(new ServerInfoCommand());
+        getCommand("servers").setExecutor(new ServersCommand());
 
 
     }
 
     @Override
     public void onDisable() {
+        serverUpdateTask.cancel();
+
+        sharedEmerald.getServerManager().setOffline(sharedEmerald.getServerManager().getByUUID(serverProperties.getUuid()), jedis);
+
         instance = null;
-
-        JsonObject object = new JsonObject();
-        object.addProperty("uuid", serverProperties.getUuid().toString());
-
-        sharedEmerald.getServerManager().setOffline(sharedEmerald.getServerManager().getByUUID(serverProperties.getUuid()));
-        sharedEmerald.getJedisAPI().getJedisHandler().write("shutdownserver###" + object.toString());
     }
 }
