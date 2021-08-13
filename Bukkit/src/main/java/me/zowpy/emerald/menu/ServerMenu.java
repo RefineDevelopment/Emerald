@@ -49,6 +49,7 @@ public class ServerMenu extends PaginatedMenu {
                             .lore(Arrays.asList(
                                  "&aName: &f" + server.getName(),
                                  "&aStatus: " + server.getStatus().getMessage(),
+                                 "&aGroup: " + server.getGroup().getName(),
                                  "&aOnlinePlayers: &f" + server.getOnlinePlayers(),
                                  "&aMaxPlayers: &f" + server.getMaxPlayers()
                             )).build();

@@ -10,7 +10,14 @@ redis:
     password: "emerald"
 
 server-name: "Lobby"
+server-group: "HUB"
 # Dont touch this!
 server-uuid: "null"
+
+# Make sure this is the same in all servers
+server-groups:
+  - "EU"
+  - "NA"
+  - "HUB"
 
 

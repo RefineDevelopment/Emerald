@@ -32,7 +32,9 @@ public class ServerInfoCommand implements CommandExecutor {
                 sender.sendMessage(ChatColor.STRIKETHROUGH + "-----------------");
                 sender.sendMessage(ChatColor.GREEN + "name: " + ChatColor.WHITE + server.getName());
                 sender.sendMessage(ChatColor.GREEN + "status: " + server.getStatus().getMessage());
-                sender.sendMessage(ChatColor.GREEN + "onlinePlayers: " + ChatColor.WHITE + server.getOnlinePlayers());
+                sender.sendMessage(ChatColor.GREEN + "group: " + ChatColor.WHITE + server.getGroup().getName());
+                sender.sendMessage(ChatColor.GREEN + "onlinePlayers: " + ChatColor.WHITE + server.getOnlinePlayers().size());
+                sender.sendMessage(ChatColor.GREEN + "tps: " + ChatColor.WHITE + server.getTps());
                 sender.sendMessage(ChatColor.GREEN + "maxPlayers: " + ChatColor.WHITE + server.getMaxPlayers());
                 sender.sendMessage(ChatColor.STRIKETHROUGH + "-----------------");
             }

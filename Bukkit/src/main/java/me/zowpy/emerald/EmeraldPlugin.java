@@ -8,15 +8,22 @@ import lombok.Getter;
 import me.zowpy.emerald.command.ServerInfoCommand;
 import me.zowpy.emerald.command.ServersCommand;
 import me.zowpy.emerald.shared.SharedEmerald;
+import me.zowpy.emerald.shared.server.EmeraldGroup;
 import me.zowpy.emerald.shared.server.ServerProperties;
 import me.zowpy.emerald.shared.server.ServerStatus;
+import me.zowpy.emerald.shared.util.TPSUtility;
 import me.zowpy.emerald.task.ServerUpdateTask;
 import me.zowpy.emerald.utils.ConfigFile;
 import me.zowpy.jedisapi.redis.RedisCredentials;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import redis.clients.jedis.Jedis;
 
+import java.util.ArrayList;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Getter
 public class EmeraldPlugin extends JavaPlugin {
@@ -46,8 +53,10 @@ public class EmeraldPlugin extends JavaPlugin {
         serverProperties.setIp(getServer().getIp());
         serverProperties.setPort(getServer().getPort());
         serverProperties.setName(settingsFile.getConfig().getString("server-name"));
-        serverProperties.setOnlinePlayers(getServer().getOnlinePlayers().size());
+        serverProperties.setOnlinePlayers(getServer().getOnlinePlayers().stream().map(Entity::getUniqueId).collect(Collectors.toList()));
+        serverProperties.setWhitelistedPlayers(getServer().getWhitelistedPlayers().stream().map(OfflinePlayer::getUniqueId).collect(Collectors.toList()));
         serverProperties.setMaxPlayers(getServer().getMaxPlayers());
+        serverProperties.setTps(TPSUtility.getRecentTps()[0]);
 
         UUID uuid;
         if (settingsFile.getConfig().getString("server-uuid").equalsIgnoreCase("null")) {
@@ -69,11 +78,19 @@ public class EmeraldPlugin extends JavaPlugin {
                 settingsFile.getConfig().getBoolean("redis.auth.enabled")
         ));
 
+        for (String s : settingsFile.getConfig().getStringList("server-groups")) {
+            sharedEmerald.getGroupManager().getGroups().add(new EmeraldGroup(s));
+        }
+
+        serverProperties.setGroup(sharedEmerald.getGroupManager().getByName(settingsFile.getConfig().getString("server-group")));
+
         sharedEmerald.setServerProperties(serverProperties);
         /*  Create the current server to redis cache  */
         sharedEmerald.getServerManager().createServer();
 
         sharedEmerald.getServerManager().updateServers();
+
+
 
         jedis = sharedEmerald.getJedisAPI().getJedisHandler().getJedisPool().getResource();
 

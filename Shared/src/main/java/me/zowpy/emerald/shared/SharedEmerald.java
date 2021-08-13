@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import me.zowpy.emerald.shared.jedis.SharedJedisSubscriber;
+import me.zowpy.emerald.shared.manager.GroupManager;
 import me.zowpy.emerald.shared.manager.ServerManager;
 import me.zowpy.emerald.shared.server.ServerProperties;
 import me.zowpy.jedisapi.JedisAPI;
@@ -29,6 +30,7 @@ public class SharedEmerald {
     private final UUID uuid;
     private final JedisAPI jedisAPI;
     private final ServerManager serverManager;
+    private final GroupManager groupManager;
 
     @Setter private ServerProperties serverProperties;
 
@@ -38,6 +40,7 @@ public class SharedEmerald {
         jedisAPI.registerSubscriber(new SharedJedisSubscriber(this));
 
         this.serverManager = new ServerManager(this);
+        this.groupManager = new GroupManager();
 
     }
 

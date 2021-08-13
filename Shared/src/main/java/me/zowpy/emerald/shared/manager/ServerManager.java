@@ -1,8 +1,10 @@
 package me.zowpy.emerald.shared.manager;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import lombok.Getter;
 import me.zowpy.emerald.shared.SharedEmerald;
+import me.zowpy.emerald.shared.server.EmeraldGroup;
 import me.zowpy.emerald.shared.server.EmeraldServer;
 import me.zowpy.emerald.shared.server.ServerProperties;
 import me.zowpy.emerald.shared.server.ServerStatus;
@@ -39,23 +41,11 @@ public class ServerManager {
         try {
             Jedis jedis = emerald.getJedisAPI().getJedisHandler().getJedisPool().getResource();
 
-           /* for (EmeraldServer server : emeraldServers) {
-                if (jedis.exists("server-" + server.getUuid().toString())) {
-                    Map<String, String> data = jedis.hgetAll("server-" + server.getUuid().toString());
-                    server.setName(data.get("name"));
-                    server.setIp(data.get("ip"));
-                    server.setPort(Integer.parseInt(data.get("port")));
-                    server.setStatus(ServerStatus.valueOf(data.get("status")));
-                    server.setOnlinePlayers(Integer.parseInt(data.get("onlinePlayers")));
-                    server.setMaxPlayers(Integer.parseInt(data.get("maxPlayers")));
-
-                    data.forEach((s, s2) -> emeraldServerData.put(server.getUuid(), s, s2));
-                }
-            }  */
-
+            System.out.println("test");
             if (emerald.getJedisAPI().getJedisHandler().getCredentials().isAuth()) {
                 jedis.auth(emerald.getJedisAPI().getJedisHandler().getCredentials().getPassword());
             }
+            System.out.println("test 1");
 
             for (String key : jedis.keys("server*")) {
                 if (key.startsWith("server-")) {
@@ -77,8 +67,19 @@ public class ServerManager {
                     server.setIp(data.get("ip"));
                     server.setPort(Integer.parseInt(data.get("port")));
                     server.setStatus(ServerStatus.valueOf(data.get("status")));
-                    server.setOnlinePlayers(Integer.parseInt(data.get("onlinePlayers")));
+                    List<UUID> onlinePlayers = (List<UUID>) SharedEmerald.GSON.fromJson(data.get("onlinePlayers"), List.class);
+                    List<UUID> whitelistedPlayers = (List<UUID>) SharedEmerald.GSON.fromJson(data.get("whitelistedPlayers"), List.class);
+                    server.setOnlinePlayers(onlinePlayers);
+                    server.setWhitelistedPlayers(whitelistedPlayers);
                     server.setMaxPlayers(Integer.parseInt(data.get("maxPlayers")));
+                    server.setGroup(emerald.getGroupManager().getByName(data.get("group")));
+                    server.setTps(Double.parseDouble(data.get("tps")));
+
+                    EmeraldGroup group = emerald.getGroupManager().getByName(data.get("group"));
+
+                    if (!group.getServers().contains(server)) {
+                        group.getServers().add(server);
+                    }
                 }
             }
         }catch (Exception e) {
@@ -99,9 +100,20 @@ public class ServerManager {
         server.setIp(object.get("ip").getAsString());
         server.setPort(object.get("port").getAsInt());
         server.setStatus(ServerStatus.valueOf(object.get("status").getAsString().toUpperCase()));
-        server.setOnlinePlayers(object.get("onlinePlayers").getAsInt());
-        server.setMaxPlayers(object.get("maxPlayer").getAsInt());
+        List<UUID> online = new ArrayList<>();
+        List<UUID> whitelist = new ArrayList<>();
+        for (JsonElement e : object.get("onlinePlayers").getAsJsonArray()) {
+            online.add(UUID.fromString(e.getAsString()));
+        }
 
+        for (JsonElement e : object.get("whitelistedPlayers").getAsJsonArray()) {
+            whitelist.add(UUID.fromString(e.getAsString()));
+        }
+        server.setOnlinePlayers(online);
+        server.setWhitelistedPlayers(whitelist);
+        server.setMaxPlayers(object.get("maxPlayer").getAsInt());
+        server.setGroup(emerald.getGroupManager().getByName(object.get("group").getAsString()));
+        server.setTps(object.get("tps").getAsDouble());
 
         updateServer(server);
     }
@@ -120,6 +132,7 @@ public class ServerManager {
         server.setStatus(serverProperties.getServerStatus());
         server.setOnlinePlayers(serverProperties.getOnlinePlayers());
         server.setMaxPlayers(serverProperties.getMaxPlayers());
+        server.setGroup(serverProperties.getGroup());
 
 
         updateServer(server);
@@ -141,7 +154,10 @@ public class ServerManager {
             data.put("port", server.getPort() + "");
             data.put("status", server.getStatus().name());
             data.put("maxPlayers", server.getMaxPlayers() + "");
-            data.put("onlinePlayers", server.getOnlinePlayers() + "");
+            data.put("onlinePlayers", SharedEmerald.GSON.toJson(server.getOnlinePlayers()));
+            data.put("whitelistedPlayers", SharedEmerald.GSON.toJson(server.getWhitelistedPlayers()));
+            data.put("group", server.getGroup().getName());
+            data.put("tps", server.getTps() + "");
 
             if (emerald.getJedisAPI().getJedisHandler().getCredentials().isAuth()) {
                 jedis.auth(emerald.getJedisAPI().getJedisHandler().getCredentials().getPassword());
@@ -166,8 +182,11 @@ public class ServerManager {
             data.put("ip", emerald.getServerProperties().getIp());
             data.put("port", emerald.getServerProperties().getPort() + "");
             data.put("status", emerald.getServerProperties().getServerStatus().name());
-            data.put("onlinePlayers", emerald.getServerProperties().getOnlinePlayers() + "");
+            data.put("onlinePlayers", SharedEmerald.GSON.toJson(emerald.getServerProperties().getOnlinePlayers()));
+            data.put("whitelistedPlayers", SharedEmerald.GSON.toJson(emerald.getServerProperties().getWhitelistedPlayers()));
             data.put("maxPlayers", emerald.getServerProperties().getMaxPlayers() + "");
+            data.put("group", emerald.getServerProperties().getGroup().getName());
+            data.put("tps", emerald.getServerProperties().getTps() + "");
 
             if (emerald.getJedisAPI().getJedisHandler().getCredentials().isAuth()) {
                 jedis.auth(emerald.getJedisAPI().getJedisHandler().getCredentials().getPassword());
@@ -202,8 +221,11 @@ public class ServerManager {
             data.put("ip", server.getIp());
             data.put("port", server.getPort() + "");
             data.put("status", server.getStatus().name());
-            data.put("onlinePlayers", server.getOnlinePlayers() + "");
+            data.put("onlinePlayers", SharedEmerald.GSON.toJson(server.getOnlinePlayers()));
+            data.put("whitelistedPlayers", SharedEmerald.GSON.toJson(server.getWhitelistedPlayers()));
             data.put("maxPlayers", server.getMaxPlayers() + "");
+            data.put("group", server.getGroup().getName());
+            data.put("tps", server.getTps() + "");
 
             if (emerald.getJedisAPI().getJedisHandler().getCredentials().isAuth()) {
                 jedis.auth(emerald.getJedisAPI().getJedisHandler().getCredentials().getPassword());
