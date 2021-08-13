@@ -49,13 +49,14 @@ public class ServerManager {
 
             for (String key : jedis.keys("server*")) {
                 if (key.startsWith("server-")) {
-                    if (jedis.hget(key, "status").equalsIgnoreCase(ServerStatus.OFFLINE.name())) {
+                    UUID uuid = UUID.fromString(key.replace("server-", ""));
+                    if (jedis.hget(key, "status").equalsIgnoreCase(ServerStatus.OFFLINE.name()) && getByUUID(uuid) != null) {
                         return;
                     }
 
                     Map<String, String> data = jedis.hgetAll(key);
 
-                    UUID uuid = UUID.fromString(key.replace("server-", ""));
+
 
                     EmeraldServer server;
 

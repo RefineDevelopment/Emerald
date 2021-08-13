@@ -33,9 +33,9 @@ public class TPSUtility {
     private static double[] getRecentTpsRefl() throws Throwable {
         if (minecraftServer == null) {
             Server server = Bukkit.getServer();
-            Field serverField = server.getClass().getField("server");
-            serverField.setAccessible(true);
-            minecraftServer = serverField.get(server);
+            Field consoleField = server.getClass().getDeclaredField("console");
+            consoleField.setAccessible(true);
+            minecraftServer = consoleField.get(server);
         }
         if (recentTps == null) {
             recentTps = minecraftServer.getClass().getSuperclass().getDeclaredField("recentTps");

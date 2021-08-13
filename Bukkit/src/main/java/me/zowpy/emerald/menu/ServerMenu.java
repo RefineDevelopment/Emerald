@@ -47,10 +47,12 @@ public class ServerMenu extends PaginatedMenu {
                     return new ItemBuilder(server.getStatus() == ServerStatus.ONLINE ? XMaterial.GREEN_WOOL.parseItem() : server.getStatus() == ServerStatus.WHITELISTED ? XMaterial.YELLOW_WOOL.parseItem() : XMaterial.RED_WOOL.parseItem())
                             .name(server.getName())
                             .lore(Arrays.asList(
+                                 "&aUUID: &f" + server.getUuid().toString(),
                                  "&aName: &f" + server.getName(),
                                  "&aStatus: " + server.getStatus().getMessage(),
                                  "&aGroup: " + server.getGroup().getName(),
-                                 "&aOnlinePlayers: &f" + server.getOnlinePlayers(),
+                                 "&aTPS: &f" + server.getTps(),
+                                 "&aOnlinePlayers: &f" + server.getOnlinePlayers().size(),
                                  "&aMaxPlayers: &f" + server.getMaxPlayers()
                             )).build();
                 }

@@ -56,7 +56,7 @@ public class EmeraldPlugin extends JavaPlugin {
         serverProperties.setOnlinePlayers(getServer().getOnlinePlayers().stream().map(Entity::getUniqueId).collect(Collectors.toList()));
         serverProperties.setWhitelistedPlayers(getServer().getWhitelistedPlayers().stream().map(OfflinePlayer::getUniqueId).collect(Collectors.toList()));
         serverProperties.setMaxPlayers(getServer().getMaxPlayers());
-        serverProperties.setTps(TPSUtility.getRecentTps()[0]);
+        serverProperties.setTps(TPSUtility.getRecentTps()[1]);
 
         UUID uuid;
         if (settingsFile.getConfig().getString("server-uuid").equalsIgnoreCase("null")) {
