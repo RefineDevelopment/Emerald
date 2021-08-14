@@ -9,8 +9,10 @@ import me.zowpy.emerald.shared.server.ServerStatus;
 import me.zowpy.jedisapi.redis.subscription.IncomingMessage;
 import me.zowpy.jedisapi.redis.subscription.JedisSubscriber;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * This Project is property of Zowpy © 2021
@@ -70,4 +72,18 @@ public class SharedJedisSubscriber extends JedisSubscriber {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
         }
     }
+
+    @IncomingMessage(payload = "start")
+    public void startServer(JsonObject object) {
+        Bukkit.getOnlinePlayers().stream().filter(player -> player.hasPermission("emerald.admin")).collect(Collectors.toList())
+                .forEach(player -> player.sendMessage(ChatColor.GREEN + "[Emerald] " + ChatColor.BOLD + object.get("name").getAsString() + ChatColor.WHITE + " went online!"));
+        Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "[Emerald] " + ChatColor.BOLD + object.get("name").getAsString() + ChatColor.WHITE + " went online!");
+    }
+    @IncomingMessage(payload = "shutdown")
+    public void stopServer(JsonObject object) {
+        Bukkit.getOnlinePlayers().stream().filter(player -> player.hasPermission("emerald.admin")).collect(Collectors.toList())
+                .forEach(player -> player.sendMessage(ChatColor.GREEN + "[Emerald] " + ChatColor.BOLD + object.get("name").getAsString() + ChatColor.WHITE + " went offline!"));
+        Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "[Emerald] " + ChatColor.BOLD + object.get("name").getAsString() + ChatColor.WHITE + " went offline!");
+    }
+
 }

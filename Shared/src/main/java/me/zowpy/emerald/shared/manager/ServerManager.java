@@ -252,6 +252,11 @@ public class ServerManager {
             jedis.auth(emerald.getJedisAPI().getJedisHandler().getCredentials().getPassword());
         }
 
+        JsonObject object = new JsonObject();
+        object.addProperty("name", server.getName());
+
+        jedis.publish(emerald.getJedisAPI().getCredentials().getChannel(), "shutdown###" + object.toString());
+
         Map<String, String> data = jedis.hgetAll("server-" + server.getUuid().toString());
         data.put("status", ServerStatus.OFFLINE.name());
         jedis.hset("server-" + server.getUuid().toString(), data);

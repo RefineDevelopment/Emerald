@@ -43,7 +43,6 @@ public class JedisHandler {
 
     public void write(String message) {
         try (Jedis jedis = jedisPool.getResource()) {
-            this.jedis = jedis;
             if (credentials.isAuth()) jedis.auth(credentials.getPassword());
             jedis.publish(credentials.getChannel(), message);
         }finally {

@@ -3,7 +3,6 @@ package me.zowpy.emerald;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import lombok.Getter;
 import me.zowpy.emerald.command.ServerInfoCommand;
 import me.zowpy.emerald.command.ServersCommand;
@@ -17,11 +16,9 @@ import me.zowpy.emerald.utils.ConfigFile;
 import me.zowpy.jedisapi.redis.RedisCredentials;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import redis.clients.jedis.Jedis;
 
-import java.util.ArrayList;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -93,6 +90,11 @@ public class EmeraldPlugin extends JavaPlugin {
 
 
         jedis = sharedEmerald.getJedisAPI().getJedisHandler().getJedisPool().getResource();
+
+        JsonObject object = new JsonObject();
+        object.addProperty("name", serverProperties.getName());
+
+        sharedEmerald.getJedisAPI().getJedisHandler().write("start###"+ object.toString());
 
         serverUpdateTask = new ServerUpdateTask();
 
