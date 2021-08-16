@@ -1,6 +1,6 @@
 name: Emerald
 version: ${project.version}
-main: me.zowpy.emerald.EmeraldPlugin
+main: io.github.zowpy.emerald.EmeraldPlugin
 authors: [ Zowpy ]
 commands:
   serverinfo:
