@@ -3,6 +3,7 @@ package io.github.zowpy.emerald;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import io.github.zowpy.emerald.utils.IPUtil;
 import io.github.zowpy.emerald.utils.menu.ButtonListener;
 import lombok.Getter;
 import io.github.zowpy.emerald.command.ServerInfoCommand;
@@ -48,7 +49,7 @@ public class EmeraldPlugin extends JavaPlugin {
 
         serverProperties = new ServerProperties();
         serverProperties.setServerStatus(getServer().hasWhitelist() ? ServerStatus.WHITELISTED : ServerStatus.ONLINE);
-        serverProperties.setIp(getServer().getIp());
+        serverProperties.setIp(IPUtil.getIP());
         serverProperties.setPort(getServer().getPort());
         serverProperties.setName(settingsFile.getConfig().getString("server-name"));
         serverProperties.setOnlinePlayers(getServer().getOnlinePlayers().stream().map(Entity::getUniqueId).collect(Collectors.toList()));

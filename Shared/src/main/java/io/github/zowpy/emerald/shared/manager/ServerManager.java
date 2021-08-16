@@ -291,4 +291,29 @@ public class ServerManager {
                 .filter(emeraldServer -> emeraldServer.getUuid().equals(uuid)).findFirst().orElse(null);
     }
 
+    /**
+     * Returns a server matching the ip
+     *
+     * @param ip ip of the server
+     * @return {@link EmeraldServer}
+     */
+
+    public EmeraldServer getByIp(String ip) {
+        return emeraldServers.stream()
+                .filter(emeraldServer -> emeraldServer.getIp().equalsIgnoreCase(ip)).findFirst().orElse(null);
+    }
+
+    /**
+     * Returns a server matching the ip and port
+     *
+     * @param ip ip of the server
+     * @param port port of the server
+     * @return {@link EmeraldServer}
+     */
+
+    public EmeraldServer getByConnection(String ip, int port) {
+        return emeraldServers.stream()
+                .filter(emeraldServer -> emeraldServer.getIp().equalsIgnoreCase(ip) && emeraldServer.getPort() == port).findFirst().orElse(null);
+    }
+
 }
