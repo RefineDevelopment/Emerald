@@ -46,8 +46,18 @@ public class JedisHandler {
     }
 
     public void write(String message) {
-        if (credentials.isAuth()) publishJedis.auth(credentials.getPassword());
-        publishJedis.publish(credentials.getChannel(), message);
+        Jedis jedisPub = null;
+        try {
+            jedisPub = jedisPool.getResource();
+
+            if (credentials.isAuth()) jedisPub.auth(credentials.getPassword());
+
+            jedisPub.publish(credentials.getChannel(), message);
+        }finally {
+            if (jedisPub != null) {
+                jedisPub.close();
+            }
+        }
     }
 
 
