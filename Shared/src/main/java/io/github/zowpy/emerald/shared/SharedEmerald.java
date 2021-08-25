@@ -4,14 +4,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import io.github.zowpy.emerald.shared.server.EmeraldServer;
+import io.github.zowpy.jedisapi.JedisAPI;
+import io.github.zowpy.jedisapi.redis.RedisCredentials;
 import lombok.Getter;
 import lombok.Setter;
 import io.github.zowpy.emerald.shared.jedis.SharedJedisSubscriber;
 import io.github.zowpy.emerald.shared.manager.GroupManager;
 import io.github.zowpy.emerald.shared.manager.ServerManager;
 import io.github.zowpy.emerald.shared.server.ServerProperties;
-import io.github.zowpy.jedisapi.JedisAPI;
-import io.github.zowpy.jedisapi.redis.RedisCredentials;
 
 import java.util.UUID;
 

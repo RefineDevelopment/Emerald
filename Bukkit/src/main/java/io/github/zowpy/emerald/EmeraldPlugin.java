@@ -3,11 +3,7 @@ package io.github.zowpy.emerald;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import io.github.zowpy.emerald.utils.IPUtil;
-import io.github.zowpy.emerald.utils.menu.ButtonListener;
-import lombok.Getter;
 import io.github.zowpy.emerald.command.ServerInfoCommand;
-import io.github.zowpy.emerald.command.ServersCommand;
 import io.github.zowpy.emerald.shared.SharedEmerald;
 import io.github.zowpy.emerald.shared.server.EmeraldGroup;
 import io.github.zowpy.emerald.shared.server.ServerProperties;
@@ -15,7 +11,9 @@ import io.github.zowpy.emerald.shared.server.ServerStatus;
 import io.github.zowpy.emerald.shared.util.TPSUtility;
 import io.github.zowpy.emerald.task.ServerUpdateTask;
 import io.github.zowpy.emerald.utils.ConfigFile;
+import io.github.zowpy.emerald.utils.IPUtil;
 import io.github.zowpy.jedisapi.redis.RedisCredentials;
+import lombok.Getter;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,7 +26,7 @@ import java.util.stream.Collectors;
 public class EmeraldPlugin extends JavaPlugin {
 
     @Getter private static EmeraldPlugin instance;
-    public static Gson GSON = new GsonBuilder().serializeNulls().create();
+    public final static Gson GSON = new GsonBuilder().serializeNulls().create();
 
     private Jedis jedis;
 
@@ -85,9 +83,7 @@ public class EmeraldPlugin extends JavaPlugin {
 
         sharedEmerald.setServerProperties(serverProperties);
         /*  Create the current server to redis cache  */
-        sharedEmerald.getServerManager().createServer();
-
-        sharedEmerald.getServerManager().updateServers();
+        sharedEmerald.getServerManager().saveServer(serverProperties);
 
 
 
@@ -101,9 +97,6 @@ public class EmeraldPlugin extends JavaPlugin {
         serverUpdateTask = new ServerUpdateTask();
 
         getCommand("serverinfo").setExecutor(new ServerInfoCommand());
-        getCommand("servers").setExecutor(new ServersCommand());
-
-        getServer().getPluginManager().registerEvents(new ButtonListener(), this);
 
 
     }
@@ -112,7 +105,8 @@ public class EmeraldPlugin extends JavaPlugin {
     public void onDisable() {
         serverUpdateTask.cancel();
 
-        sharedEmerald.getServerManager().setOffline(sharedEmerald.getServerManager().getByUUID(serverProperties.getUuid()), jedis);
+        serverProperties.setServerStatus(ServerStatus.OFFLINE);
+        sharedEmerald.getServerManager().saveServer(serverProperties);
 
         instance = null;
     }

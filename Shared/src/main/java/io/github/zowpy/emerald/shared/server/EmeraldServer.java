@@ -22,7 +22,7 @@ public class EmeraldServer {
     private UUID uuid;
     private String name, ip;
     private int port, maxPlayers;
-    private ServerStatus status;
+    private ServerStatus serverStatus;
     private EmeraldGroup group;
 
     private double tps;
@@ -39,6 +39,6 @@ public class EmeraldServer {
         this.port = object.get("port").getAsInt();
        // this.onlinePlayers = object.get("onlinePlayers").getAsInt();
         this.maxPlayers = object.get("maxPlayers").getAsInt();
-        this.status = ServerStatus.valueOf(object.get("status").getAsString().toUpperCase());
+        this.serverStatus = ServerStatus.valueOf(object.get("status").getAsString().toUpperCase());
     }
 }
