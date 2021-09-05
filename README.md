@@ -60,6 +60,7 @@ this returns CompletableFuture<EmeraldServer>
   
   EmeraldServer is the server's object
   with this you can get the following:
+  
     1. UUID
     2. Name
     3. IP & Port
