@@ -10,8 +10,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.text.DecimalFormat;
-
 /**
  * This Project is property of Zowpy © 2021
  * Redistribution of this Project is not allowed
@@ -35,7 +33,6 @@ public class ServerInfoCommand implements CommandExecutor {
             boolean isPlayer = sender instanceof Player;
             Player player = isPlayer ? (Player) sender : null;
 
-            DecimalFormat format = new DecimalFormat("##.##");
             EmeraldPlugin.getInstance().getSharedEmerald().getServerManager().getAsList().thenAccept(emeraldServers -> {
                 for (EmeraldServer server : emeraldServers) {
                     sender.sendMessage(ChatColor.STRIKETHROUGH + "-----------------");
@@ -43,7 +40,7 @@ public class ServerInfoCommand implements CommandExecutor {
                     sender.sendMessage(ChatColor.GREEN + "status: " + server.getServerStatus().getMessage());
                     sender.sendMessage(ChatColor.GREEN + "group: " + ChatColor.WHITE + server.getGroup().getName());
                     sender.sendMessage(ChatColor.GREEN + "onlinePlayers: " + ChatColor.WHITE + server.getOnlinePlayers().size());
-                    sender.sendMessage(ChatColor.GREEN + "tps: " + ChatColor.WHITE + format.format(TPSUtility.round(server.getTps())));
+                    sender.sendMessage(ChatColor.GREEN + "tps: " + ChatColor.WHITE + TPSUtility.getTPS());
                     sender.sendMessage(ChatColor.GREEN + "joinable: " + ChatColor.WHITE + ((server.getServerStatus() == ServerStatus.OFFLINE) ? "No" : (!isPlayer || server.getServerStatus() == ServerStatus.WHITELISTED && !server.getWhitelistedPlayers().contains(player.getUniqueId()) ? "No" : server.getWhitelistedPlayers().contains(player.getUniqueId()) ? "Yes" : "No")));
                     sender.sendMessage(ChatColor.GREEN + "maxPlayers: " + ChatColor.WHITE + server.getMaxPlayers());
                     sender.sendMessage(ChatColor.STRIKETHROUGH + "-----------------");

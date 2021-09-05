@@ -1,7 +1,6 @@
 package me.zowpy.emerald.shared.server;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Server;
 
 /**
  * This Project is property of Zowpy © 2021

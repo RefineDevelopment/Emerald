@@ -109,9 +109,16 @@ public class ServerManager {
         });
     }
 
+    /**
+     * gets a server that contains a specific player
+     *
+     * @param player player
+     * @return {@link CompletableFuture<EmeraldServer>}
+     */
+
     public CompletableFuture<EmeraldServer> getByPlayer(UUID player) {
         return CompletableFuture.supplyAsync(() -> {
-            AtomicReference<EmeraldServer> emeraldServer = new AtomicReference<>();
+            final AtomicReference<EmeraldServer> emeraldServer = new AtomicReference<>();
 
             getAsList().thenAccept(emeraldServers -> {
                 for (EmeraldServer server : emeraldServers) {

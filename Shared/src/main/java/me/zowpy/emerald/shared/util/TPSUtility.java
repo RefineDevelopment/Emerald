@@ -34,10 +34,6 @@ public class TPSUtility {
     }
 
     public static String getTPS() {
-        return format.format(round(getRecentTps()[1]));
-    }
-
-    public static double round(double tps) {
-        return tps >= 20 ? 20 : tps;
+        return format.format(Math.max(getRecentTps()[0], 20));
     }
 }
