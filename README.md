@@ -38,3 +38,14 @@ You can get a server by ip & port
 EmeraldPlugin.getInstance().getSharedEmerald().getServerManager().getByConnection(ip, port);
 ``` 
 this returns CompletableFuture<EmeraldServer> 
+
+EmeraldServer:
+  EmeraldServer is the server's object
+  with this you can get the following:
+    1. UUID
+    2. Name
+    3. IP & Port
+    4. MaxPlayers
+    5. ServerStatus
+    6. TPS
+    7. OnlinePlayer & WhitelistedPlayer (both are lists of uuids)
