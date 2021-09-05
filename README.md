@@ -67,5 +67,5 @@ this returns CompletableFuture<EmeraldServer>
     4. MaxPlayers
     5. ServerStatus
     6. TPS
-    7. OnlinePlayer & WhitelistedPlayer (both are lists of uuids)
+    7. OnlinePlayers & WhitelistedPlayers (both are lists of uuids)
 
