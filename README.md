@@ -36,7 +36,7 @@ add the dependency to your maven project:
 </dependency>
 ```
 
-# Usage:
+## Usage:
 
 getting a server by uuid:
 ```Java
@@ -55,8 +55,8 @@ You can get a server by ip & port
 EmeraldPlugin.getInstance().getSharedEmerald().getServerManager().getByConnection(ip, port);
 ``` 
 this returns CompletableFuture<EmeraldServer> 
-
-EmeraldServer:
+  
+# EmeraldServer:
   
   EmeraldServer is the server's object
   with this you can get the following:
