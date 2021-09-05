@@ -39,7 +39,8 @@ EmeraldPlugin.getInstance().getSharedEmerald().getServerManager().getByConnectio
 ``` 
 this returns CompletableFuture<EmeraldServer> 
 
-EmeraldServer:
+  EmeraldServer:
+  
   EmeraldServer is the server's object
   with this you can get the following:
     1. UUID
