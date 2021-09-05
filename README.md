@@ -12,7 +12,7 @@
 Please be sure to report any issues in the issues tab and don't forget to star!
 
 ## Developed By
-Refine Development
+Refine Development & Zowpy
 
 ## Contact
 - [Discord](https://dsc.gg/refine)
