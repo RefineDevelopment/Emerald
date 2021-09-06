@@ -1,9 +1,10 @@
 name: Emerald
 version: ${project.version}
 main: me.zowpy.emerald.EmeraldPlugin
-authors: [ Zowpy ]
+authors: [ Zowpy, Refine Development ]
 commands:
   serverinfo:
+    description: View information on a server managed by Emerald.
     aliases:
       - servers
       - si

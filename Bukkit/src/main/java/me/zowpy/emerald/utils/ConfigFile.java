@@ -16,19 +16,20 @@ import java.io.File;
  * Project: Emerald
  */
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 @Getter
 public class ConfigFile {
 
-    private File file;
-    private YamlConfiguration config;
+    private final File file;
+    private final YamlConfiguration config;
 
     @SneakyThrows
     public ConfigFile(Plugin plugin, String name) {
         file = new File(plugin.getDataFolder(), name + ".yml");
 
-        if (!plugin.getDataFolder().exists()) {
+        if (!plugin.getDataFolder().exists())
             plugin.getDataFolder().mkdir();
-        }
+
 
         if (!file.exists()) {
             file.createNewFile();
@@ -41,9 +42,5 @@ public class ConfigFile {
     @SneakyThrows
     public void save() {
         config.save(file);
-    }
-
-    public void reload() {
-        config = YamlConfiguration.loadConfiguration(file);
     }
 }

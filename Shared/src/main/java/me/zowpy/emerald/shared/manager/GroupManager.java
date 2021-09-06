@@ -21,13 +21,14 @@ public class GroupManager {
     private final List<EmeraldGroup> groups = new ArrayList<>();
 
     /**
-     *
-     * @param name name of the group
-     * @return {@link EmeraldGroup}
+     * Find a group by its name.
      */
-
     public EmeraldGroup getByName(String name) {
-        return groups.stream().filter(emeraldGroup -> emeraldGroup.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
+        return groups
+                .stream()
+                .filter(emeraldGroup -> emeraldGroup.getName().equalsIgnoreCase(name))
+                .findFirst()
+                .orElse(null);
     }
 
 

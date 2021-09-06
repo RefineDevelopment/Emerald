@@ -1,5 +1,7 @@
 package me.zowpy.emerald.shared.server;
 
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 
 /**
@@ -10,17 +12,19 @@ import org.bukkit.ChatColor;
  * Created: 8/10/2021
  * Project: Emerald
  */
+@RequiredArgsConstructor
 public enum ServerStatus {
 
-    ONLINE(ChatColor.GREEN + "Online"), OFFLINE(ChatColor.RED + "Offline"), WHITELISTED(ChatColor.YELLOW + "Whitelisted");
+    OFFLINE(ChatColor.RED),
+    ONLINE(ChatColor.GREEN),
+    WHITELISTED(ChatColor.YELLOW);
 
-    String message;
+    final ChatColor color;
 
-    ServerStatus(String message) {
-        this.message = message;
-    }
 
     public String getMessage() {
-        return message;
+        return
+                this.color.toString() + // Get the color specified for this status.
+                        WordUtils.capitalize(name().toLowerCase()); // Capitalize it correctly.
     }
 }

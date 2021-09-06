@@ -34,7 +34,7 @@ public class ServerUpdateTask extends BukkitRunnable {
         serverProperties.setOnlinePlayers(Bukkit.getOnlinePlayers().stream().map(Entity::getUniqueId).collect(Collectors.toList()));
         serverProperties.setWhitelistedPlayers(Bukkit.getWhitelistedPlayers().stream().map(OfflinePlayer::getUniqueId).collect(Collectors.toList()));
         serverProperties.setMaxPlayers(Bukkit.getMaxPlayers());
-        serverProperties.setTps(TPSUtility.round(Double.parseDouble(TPSUtility.getTPS())));
+        serverProperties.setTps(Math.max(Double.parseDouble(TPSUtility.getTPS()), 20));
 
         EmeraldPlugin.getInstance().getSharedEmerald().getServerManager().saveServer(serverProperties);
     }
