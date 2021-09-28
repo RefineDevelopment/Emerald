@@ -16,7 +16,8 @@ import java.util.UUID;
  * Project: Emerald
  */
 
-@Getter @Setter
+@Getter
+@Setter
 public class EmeraldServer {
 
     private UUID uuid;
@@ -37,7 +38,6 @@ public class EmeraldServer {
         this.name = object.get("name").getAsString();
         this.ip = object.get("ip").getAsString();
         this.port = object.get("port").getAsInt();
-       // this.onlinePlayers = object.get("onlinePlayers").getAsInt();
         this.maxPlayers = object.get("maxPlayers").getAsInt();
         this.serverStatus = ServerStatus.valueOf(object.get("status").getAsString().toUpperCase());
     }

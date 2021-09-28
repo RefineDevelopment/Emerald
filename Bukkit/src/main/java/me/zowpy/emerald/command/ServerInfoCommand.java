@@ -23,32 +23,29 @@ public class ServerInfoCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-
-        if (command.getName().equalsIgnoreCase("serverinfo")) {
-            if (sender instanceof Player && !((Player) sender).hasPermission("emerald.admin")) {
-                sender.sendMessage(ChatColor.RED + "You don't have enough permissions to execute this command!");
-                return true;
-            }
-
-            boolean isPlayer = sender instanceof Player;
-            Player player = isPlayer ? (Player) sender : null;
-
-            EmeraldPlugin.getInstance().getSharedEmerald().getServerManager().getAsList().thenAccept(emeraldServers -> {
-                for (EmeraldServer server : emeraldServers) {
-                    sender.sendMessage(ChatColor.STRIKETHROUGH + "-----------------");
-                    sender.sendMessage(ChatColor.GREEN + "name: " + ChatColor.WHITE + server.getName());
-                    sender.sendMessage(ChatColor.GREEN + "status: " + server.getServerStatus().getMessage());
-                    sender.sendMessage(ChatColor.GREEN + "group: " + ChatColor.WHITE + server.getGroup().getName());
-                    sender.sendMessage(ChatColor.GREEN + "onlinePlayers: " + ChatColor.WHITE + server.getOnlinePlayers().size());
-                    sender.sendMessage(ChatColor.GREEN + "tps: " + ChatColor.WHITE + TPSUtility.getTPS());
-                    sender.sendMessage(ChatColor.GREEN + "joinable: " + ChatColor.WHITE + ((server.getServerStatus() == ServerStatus.OFFLINE) ? "No" : (!isPlayer || server.getServerStatus() == ServerStatus.WHITELISTED && !server.getWhitelistedPlayers().contains(player.getUniqueId()) ? "No" : server.getWhitelistedPlayers().contains(player.getUniqueId()) ? "Yes" : "No")));
-                    sender.sendMessage(ChatColor.GREEN + "maxPlayers: " + ChatColor.WHITE + server.getMaxPlayers());
-                    sender.sendMessage(ChatColor.STRIKETHROUGH + "-----------------");
-                }
-            });
-
+        if (sender instanceof Player && !sender.hasPermission("emerald.admin")) { /* If our executor is a player and if they do not have the admin permission. */
+            sender.sendMessage(ChatColor.RED + "You don't have enough permissions to execute this command!");
+            return true;
         }
 
+        boolean isPlayer = sender instanceof Player;
+        Player player = isPlayer ? (Player) sender : null;
+
+        EmeraldPlugin.getInstance().getSharedEmerald().getServerManager().getAsList().thenAccept(emeraldServers -> {
+            System.out.println("pog " + emeraldServers.size());
+            for (EmeraldServer server : emeraldServers) {
+                sender.sendMessage(ChatColor.STRIKETHROUGH + "-----------------");
+                sender.sendMessage(ChatColor.GREEN + "Name: " + ChatColor.WHITE + server.getName());
+                sender.sendMessage(ChatColor.GREEN + "Status: " + server.getServerStatus().getMessage());
+                sender.sendMessage(ChatColor.GREEN + "Group: " + ChatColor.WHITE + server.getGroup().getName());
+                sender.sendMessage(ChatColor.GREEN + "Online Players: " + ChatColor.WHITE + server.getOnlinePlayers().size());
+                sender.sendMessage(ChatColor.GREEN + "Tps: " + ChatColor.WHITE + TPSUtility.getTPS());
+                sender.sendMessage(ChatColor.GREEN + "Joinable: " + ChatColor.WHITE + ((server.getServerStatus() == ServerStatus.OFFLINE) ? "No" : (!isPlayer || server.getServerStatus() == ServerStatus.WHITELISTED && !server.getWhitelistedPlayers().contains(player.getUniqueId()) ? "No" : server.getWhitelistedPlayers().contains(player.getUniqueId()) ? "Yes" : "No")));
+                sender.sendMessage(ChatColor.GREEN + "Maximum Players: " + ChatColor.WHITE + server.getMaxPlayers());
+                sender.sendMessage(ChatColor.STRIKETHROUGH + "-----------------");
+            }
+        });
+        sender.sendMessage("penius");
         return false;
     }
 }

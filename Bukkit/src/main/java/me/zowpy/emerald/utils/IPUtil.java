@@ -17,20 +17,20 @@ import java.net.URL;
 public class IPUtil {
 
     public static String getIP() {
-        URL url = null;
-        BufferedReader in = null;
-        String ipAddress = "";
+        URL url;
+        BufferedReader in;
+        String ipAddress;
         try {
             url = new URL("http://bot.whatismyipaddress.com");
             in = new BufferedReader(new InputStreamReader(url.openStream()));
             ipAddress = in.readLine().trim();
-            /* IF not connected to internet, then
-             * the above code will return one empty
-             * String, we can check it's length and
-             * if length is not greater than zero,
-             * then we can go for LAN IP or Local IP
-             * or PRIVATE IP
+            /* If not connected to internet, then
+             * the above code will return an empty
+             * string, we can check the length and
+             * if the length is not greater than zero,
+             * then we can go for LAN/Local/Private IP.
              */
+
             if (!(ipAddress.length() > 0)) {
                 try {
                     InetAddress ip = InetAddress.getLocalHost();
@@ -41,7 +41,7 @@ public class IPUtil {
                 }
             }
         } catch (Exception ex) {
-            // This try will give the Private IP of the Host.
+            /* If we do not have internet, try getting it from our host. */
             try {
                 InetAddress ip = InetAddress.getLocalHost();
                 System.out.println((ip.getHostAddress()).trim());
@@ -49,7 +49,6 @@ public class IPUtil {
             } catch(Exception exp) {
                 ipAddress = "ERROR";
             }
-            //ex.printStackTrace();
         }
 
         return ipAddress;

@@ -1,7 +1,8 @@
-#
-# Emerald made by Zowpy
-#
+# ################ #
+# Emerald Settings #
+# ################ #
 
+# Configure the connection to redis.
 redis:
   host: "localhost"
   port: 6379
@@ -9,15 +10,11 @@ redis:
     enabled: true
     password: "emerald"
 
-server-name: "Lobby"
-server-group: "HUB"
-# Dont touch this!
-server-uuid: "null"
-
-# Make sure this is the same in all servers
-server-groups:
-  - "EU"
-  - "NA"
-  - "HUB"
-
-
+server:
+  name: "Lobby"
+  group: "HUB"
+  groups: # Make sure these values match in all servers.
+    - "EU"
+    - "NA"
+    - "HUB"
+  uuid: null # Do not edit this.

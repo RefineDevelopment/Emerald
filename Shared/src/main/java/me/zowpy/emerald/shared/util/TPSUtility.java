@@ -2,6 +2,7 @@ package me.zowpy.emerald.shared.util;
 
 import java.lang.reflect.Field;
 import java.text.DecimalFormat;
+import java.util.Objects;
 
 /**
  * This Project is property of Zowpy © 2021
@@ -22,7 +23,7 @@ public class TPSUtility {
     public static double[] getRecentTps() {
         try {
             if (minecraftServer == null) {
-                minecraftServer = ReflectionUtil.getNMSClass("MinecraftServer").getMethod("getServer").invoke(null);
+                minecraftServer = Objects.requireNonNull(ReflectionUtil.getNMSClass("MinecraftServer")).getMethod("getServer").invoke(null);
                 recentTps = minecraftServer.getClass().getField("recentTps");
             }
 

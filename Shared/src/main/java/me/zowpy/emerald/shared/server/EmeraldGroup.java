@@ -1,6 +1,7 @@
 package me.zowpy.emerald.shared.server;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -15,14 +16,13 @@ import java.util.List;
  * Project: Emerald
  */
 
-@Getter @Setter
+@Getter
+@RequiredArgsConstructor
 public class EmeraldGroup {
 
     private final String name;
-    private List<EmeraldServer> servers;
 
-    public EmeraldGroup(String name) {
-        this.name = name;
-        this.servers = new ArrayList<>();
-    }
+    @Setter
+    private List<EmeraldServer> servers = new ArrayList<>();
+
 }

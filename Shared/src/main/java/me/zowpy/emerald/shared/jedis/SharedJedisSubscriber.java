@@ -23,15 +23,14 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class SharedJedisSubscriber extends JedisSubscriber {
 
-    private SharedEmerald emerald;
-
+    private final SharedEmerald emerald;
 
     @IncomingMessage(payload = "command")
-    public void executeCommand(JsonObject object) {
-        if (emerald.getUuid().equals(UUID.fromString(object.get("uuid").getAsString()))) {
+    public void execute(JsonObject object) {
+        if (emerald.getUuid().equals(UUID.fromString(object.get("uuid").getAsString()))) { // Validate server.
             String command = object.get("command").getAsString();
 
-            if (object.has("issuer")) {
+            if (object.has("issuer")) { // If we provided an issuer, read the uuid and if they are on this server make sure they execute it.
                 UUID uuid = UUID.fromString(object.get("issuer").getAsString());
                 if (Bukkit.getPlayer(uuid) != null) {
                     Bukkit.getPlayer(uuid).chat("/" + command);
@@ -39,26 +38,25 @@ public class SharedJedisSubscriber extends JedisSubscriber {
                 }
             }
 
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command); // If no issuer was provided or found execute as server.
         }
     }
 
     @IncomingMessage(payload = "start")
-    public void startServer(JsonObject object) {
-        Bukkit.getOnlinePlayers().stream().filter(player -> player.hasPermission("emerald.admin")).collect(Collectors.toList())
-                .forEach(player -> player.sendMessage(ChatColor.GREEN + "[Emerald] " + ChatColor.BOLD + object.get("name").getAsString() + ChatColor.WHITE + " went online!"));
-        Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "[Emerald] " + ChatColor.BOLD + object.get("name").getAsString() + ChatColor.WHITE + " went online!");
+    public void start(JsonObject object) {
+        String name = object.get("name").getAsString();
+        System.out.println(name);
+
+        emerald.getAdminUsers().forEach(player -> player.sendMessage(ChatColor.GREEN + "[Emerald] " + ChatColor.BOLD + name + ChatColor.WHITE + " went online!"));
+        Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "[Emerald] " + ChatColor.BOLD + name + ChatColor.WHITE + " went online!");
     }
+
     @IncomingMessage(payload = "shutdown")
-    public void stopServer(JsonObject object) {
+    public void shutdown(JsonObject object) {
         String name = object.get("name").getAsString();
 
-
-        Bukkit.getOnlinePlayers().stream().filter(player -> player.hasPermission("emerald.admin")).collect(Collectors.toList())
-                .forEach(player -> player.sendMessage(ChatColor.GREEN + "[Emerald] " + ChatColor.BOLD + name + ChatColor.WHITE + " went offline!"));
+        emerald.getAdminUsers().forEach(player -> player.sendMessage(ChatColor.GREEN + "[Emerald] " + ChatColor.BOLD + name + ChatColor.WHITE + " went offline!"));
         Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "[Emerald] " + ChatColor.BOLD + name + ChatColor.WHITE + " went offline!");
-
-
     }
 
 }
